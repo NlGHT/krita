@@ -19,6 +19,7 @@
 
 #include <math.h>
 #include "kis_pointer_utils.h"
+#include "libs/k_types.h"
 
 class Q_DECL_HIDDEN KoSnapGuide::Private
 {
@@ -48,6 +49,7 @@ public:
     int snapDistance;
     QList<KoPathPoint*> ignoredPoints;
     QList<KoShape*> ignoredShapes;
+    KisNodeList *currentlyProcessingNodes;
 };
 
 KoSnapGuide::KoSnapGuide(KoCanvasBase *canvas)
@@ -59,6 +61,7 @@ KoSnapGuide::KoSnapGuide(KoCanvasBase *canvas)
     d->strategies.append(toQShared(new ExtensionSnapStrategy()));
     d->strategies.append(toQShared(new IntersectionSnapStrategy()));
     d->strategies.append(toQShared(new BoundingBoxSnapStrategy()));
+    // NIGHT COME BACK
 }
 
 KoSnapGuide::~KoSnapGuide()
@@ -148,6 +151,49 @@ int KoSnapGuide::snapDistance() const
     return d->snapDistance;
 }
 
+// QPointF KoSnapGuide::snap(const KisNodeList nodeList, const QPointF &mousePosition, const QPointF &dragOffset, Qt::KeyboardModifiers modifiers)
+// {
+//     QPointF pos = mousePosition + dragOffset;
+//     d->currentStrategy.clear();
+
+//     if (! d->active || (modifiers & Qt::ShiftModifier))
+//         return mousePosition;
+
+//     KoSnapProxy proxy(this);
+
+//     using PriorityTuple = std::tuple<KoSnapStrategy::SnapType, qreal>;
+//     PriorityTuple minPriority(KoSnapStrategy::ToLine, HUGE_VAL);
+
+//     const qreal maxSnapDistance = d->canvas->viewConverter()->
+//             viewToDocument(QSizeF(d->snapDistance,
+//                                   d->snapDistance)).width();
+
+//     foreach (Private::KoSnapStrategySP strategy, d->strategies) {
+//         if (d->usedStrategies & strategy->type() ||
+//             strategy->type() == GridSnapping ||
+//             strategy->type() == CustomSnapping) {
+            
+//             if (! strategy->snap(pos, &proxy, maxSnapDistance))
+//                 continue;
+
+//             QPointF snapCandidate = strategy->snappedPosition();
+//             qreal distance = KoSnapStrategy::squareDistance(snapCandidate, pos);
+
+//             const PriorityTuple priority(strategy->snappedType(), distance);
+//             if (priority < minPriority) {
+//                 d->currentStrategy = strategy;
+//                 minPriority = priority;
+//             }
+//         }
+//     }
+
+//     if (! d->currentStrategy)
+//         return mousePosition;
+
+//     pos = d->currentStrategy->snappedPosition();
+//     return pos - dragOffset;
+// }
+
 QPointF KoSnapGuide::snap(const QPointF &mousePosition, const QPointF &dragOffset, Qt::KeyboardModifiers modifiers)
 {
     QPointF pos = mousePosition + dragOffset;
@@ -175,7 +221,7 @@ QPointF KoSnapGuide::snap(const QPointF &mousePosition, Qt::KeyboardModifiers mo
         if (d->usedStrategies & strategy->type() ||
             strategy->type() == GridSnapping ||
             strategy->type() == CustomSnapping) {
-
+            
             if (! strategy->snap(mousePosition, &proxy, maxSnapDistance))
                 continue;
 
@@ -187,6 +233,8 @@ QPointF KoSnapGuide::snap(const QPointF &mousePosition, Qt::KeyboardModifiers mo
                 d->currentStrategy = strategy;
                 minPriority = priority;
             }
+        } else if (strategy->type() == LayerCenterSnapping) {
+            
         }
     }
 
@@ -235,6 +283,15 @@ void KoSnapGuide::paint(QPainter &painter, const KoViewConverter &converter)
 KoCanvasBase *KoSnapGuide::canvas() const
 {
     return d->canvas;
+}
+
+void KoSnapGuide::setCurrentlyProcessingNodes(KisNodeList *currentlyProcessingNodes) {
+    d->currentlyProcessingNodes = currentlyProcessingNodes;
+}
+
+KisNodeList *KoSnapGuide::currentlyProcessingNodes() const
+{
+    return d->currentlyProcessingNodes;
 }
 
 void KoSnapGuide::setIgnoredPathPoints(const QList<KoPathPoint*> &ignoredPoints)

@@ -7,6 +7,7 @@
 #ifndef KOSNAPGUIDE_H
 #define KOSNAPGUIDE_H
 
+#include "KoSnapProxy.h"
 #include "kritaflake_export.h"
 
 #include <QScopedPointer>
@@ -57,12 +58,14 @@ public:
         DocumentBoundsSnapping = 0x80,
         DocumentCenterSnapping = 0x100,
         CustomSnapping = 0x200,
-        PixelSnapping = 0x400
+        PixelSnapping = 0x400,
+        LayerCenterSnapping = 0x800
     };
     Q_DECLARE_FLAGS(Strategies, Strategy)
 
     /// Creates the snap guide to work on the given canvas
     explicit KoSnapGuide(KoCanvasBase *canvas);
+    // explicit KoSnapGuide(KoCanvasBase *canvas, const KisNodeList &nodeList);
 
     virtual ~KoSnapGuide();
 
@@ -70,6 +73,8 @@ public:
     QPointF snap(const QPointF &mousePosition, Qt::KeyboardModifiers modifiers);
 
     QPointF snap(const QPointF &mousePosition, const QPointF &dragOffset, Qt::KeyboardModifiers modifiers);
+
+    // QPointF snap(const KisNodeList nodeList, const QPointF &mousePosition, const QPointF &dragOffset, Qt::KeyboardModifiers modifiers);
 
     /// paints the guide
     void paint(QPainter &painter, const KoViewConverter &converter);
@@ -121,6 +126,10 @@ public:
 
     /// returns the canvas the snap guide is working on
     KoCanvasBase *canvas() const;
+
+    /// returns the nodes the snap guide is working on
+    KisNodeList *currentlyProcessingNodes() const;
+    void setCurrentlyProcessingNodes(KisNodeList *currentlyProcessingNodes);
 
     /// Sets a list of path points to ignore
     void setIgnoredPathPoints(const QList<KoPathPoint*> &ignoredPoints);

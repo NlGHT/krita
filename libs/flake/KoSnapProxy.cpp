@@ -174,3 +174,8 @@ KoCanvasBase * KoSnapProxy::canvas()
     return m_snapGuide->canvas();
 }
 
+KisNodeList *KoSnapProxy::currentlyProcessingNodes()
+{
+    return m_snapGuide->currentlyProcessingNodes();
+}
+

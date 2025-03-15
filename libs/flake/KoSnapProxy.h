@@ -6,13 +6,14 @@
 #ifndef KOSNAPPROXY_H
 #define KOSNAPPROXY_H
 
-
 class KoSnapGuide;
 class KoShape;
 class KoPathSegment;
 class KoCanvasBase;
+
 #include <QList>
 #include "kritaflake_export.h"
+#include "libs/k_types.h"
 
 class QPointF;
 class QRectF;
@@ -41,6 +42,9 @@ public:
 
     /// returns canvas we are working on
     KoCanvasBase *canvas();
+
+    /// returns list of nodes selected
+    KisNodeList *currentlyProcessingNodes();
 
 private:
     KoSnapGuide *m_snapGuide;

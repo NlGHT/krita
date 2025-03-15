@@ -12,6 +12,8 @@
 #include <KoPathSegment.h>
 #include <KoCanvasBase.h>
 #include <KoViewConverter.h>
+#include <KoCanvasResourceProvider.h>
+#include <KPageView>
 
 #include <QPainter>
 #include <QPainterPath>

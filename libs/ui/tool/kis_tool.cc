@@ -44,6 +44,7 @@
 #include <kis_floating_message.h>
 #include <KisResourceServerProvider.h>
 
+#include "kis_types.h"
 #include "opengl/kis_opengl_canvas2.h"
 #include "kis_canvas_resource_provider.h"
 #include "canvas/kis_canvas2.h"
@@ -209,6 +210,17 @@ QPointF KisTool::convertToPixelCoordAndAlignOnWidget(const QPointF &pt)
     const KisCoordinatesConverter *converter = canvas2->coordinatesConverter();
     const QPointF imagePos = converter->widgetToImage(QPointF(converter->documentToWidget(pt).toPoint()));
     return imagePos;
+}
+
+QPointF KisTool::convertToPixelCoordAndSnap(const KisNodeList nodeList, KoPointerEvent *e, const QPointF &offset, bool useModifiers)
+{
+    if (!image())
+        return e->point;
+
+    KoSnapGuide *snapGuide = canvas()->snapGuide();
+    QPointF pos = snapGuide->snap(e->point, offset, useModifiers ? e->modifiers() : Qt::NoModifier);
+
+    return image()->documentToPixel(pos);
 }
 
 QPointF KisTool::convertToPixelCoordAndSnap(KoPointerEvent *e, const QPointF &offset, bool useModifiers)

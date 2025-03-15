@@ -92,6 +92,7 @@
 #include "kis_image_signal_router.h"
 
 #include "KisSnapPixelStrategy.h"
+#include "KisSnapLayerCenterStrategy.h"
 #include "KisDisplayConfig.h"
 
 
@@ -252,7 +253,7 @@ KisCanvas2::KisCanvas2(KisCoordinatesConverter *coordConverter, KoCanvasResource
 
     m_d->frameRenderStartCompressor.setDelay(1000 / config.fpsLimit());
     m_d->frameRenderStartCompressor.setMode(KisSignalCompressor::FIRST_ACTIVE);
-    snapGuide()->overrideSnapStrategy(KoSnapGuide::PixelSnapping, new KisSnapPixelStrategy());
+    snapGuide()->overrideSnapStrategy(KoSnapGuide::LayerCenterSnapping, new KisSnapLayerCenterStrategy());
 }
 
 void KisCanvas2::setup()

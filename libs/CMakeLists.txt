@@ -1,3 +1,7 @@
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
 add_subdirectory( version )
 if(APPLE)
     add_subdirectory( macosutils )

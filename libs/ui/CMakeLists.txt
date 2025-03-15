@@ -49,6 +49,7 @@ set(kritaui_LIB_SRCS
     canvas/kis_snap_line_strategy.cpp
     canvas/KisSnapPointStrategy.cpp
     canvas/KisSnapPixelStrategy.cpp
+    canvas/KisSnapLayerCenterStrategy.cpp
     canvas/KisMirrorAxisConfig.cpp
 
     dialogs/kis_about_application.cpp

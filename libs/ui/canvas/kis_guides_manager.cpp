@@ -237,7 +237,7 @@ void KisGuidesManager::Private::updateSnappingStatus(const KisGuidesConfig &valu
     snapGuide->enableSnapStrategy(KoSnapGuide::BoundingBoxSnapping, snapConfig.boundingBox());
     snapGuide->enableSnapStrategy(KoSnapGuide::DocumentBoundsSnapping, snapConfig.imageBounds());
     snapGuide->enableSnapStrategy(KoSnapGuide::DocumentCenterSnapping, snapConfig.imageCenter());
-    snapGuide->enableSnapStrategy(KoSnapGuide::PixelSnapping, snapConfig.toPixel());
+    snapGuide->enableSnapStrategy(KoSnapGuide::LayerCenterSnapping, snapConfig.toPixel());
 
     snapConfig.saveStaticData();
 }

@@ -37,6 +37,7 @@
 #include <boost/operators.hpp>
 #include "KisMoveBoundsCalculationJob.h"
 #include <KisOptimizedBrushOutline.h>
+#include <qobject.h>
 
 
 struct KisToolMoveState : KisToolChangesTrackerData, boost::equality_comparable<KisToolMoveState>
@@ -544,6 +545,9 @@ void KisToolMove::mouseMoveEvent(KoPointerEvent *event)
 void KisToolMove::startAction(KoPointerEvent *event, MoveToolMode mode)
 {
     QPoint pos = convertToPixelCoordAndSnap(event).toPoint();
+    qWarning() << "Print start action" << event->x();
+    KoSnapGuide *snapGuide = canvas()->snapGuide();
+    snapGuide->setCurrentlyProcessingNodes(&m_currentlyProcessingNodes);
     m_dragStart = pos;
     m_dragPos = pos;
 
@@ -609,6 +613,7 @@ void KisToolMove::endAction(KoPointerEvent *event)
 void KisToolMove::drag(const QPoint& newPos)
 {
     KisImageSP image = currentImage();
+    // KisImageSP root = canvas()
 
     QPoint offset = m_accumulatedOffset + newPos - m_dragStart;
 

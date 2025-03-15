@@ -12,13 +12,7 @@
 
 #include "kritaimage_export.h"
 
-template<class T>
-class KisWeakSharedPtr;
-template<class T>
-class KisSharedPtr;
-
-template<class T> class QSharedPointer;
-template<class T> class QWeakPointer;
+#include "libs/k_types.h"
 
 template <class T>
 uint qHash(KisSharedPtr<T> ptr) {
@@ -82,12 +76,7 @@ class KisMask;
 typedef KisSharedPtr<KisMask> KisMaskSP;
 typedef KisWeakSharedPtr<KisMask> KisMaskWSP;
 
-class KisNode;
-typedef KisSharedPtr<KisNode> KisNodeSP;
-typedef KisWeakSharedPtr<KisNode> KisNodeWSP;
-typedef QVector<KisNodeSP> vKisNodeSP;
-typedef vKisNodeSP::iterator vKisNodeSP_it;
-typedef vKisNodeSP::const_iterator vKisNodeSP_cit;
+
 
 class KisBaseNode;
 typedef KisSharedPtr<KisBaseNode> KisBaseNodeSP;
@@ -260,9 +249,6 @@ typedef KisSharedPtr<KisProcessingVisitor> KisProcessingVisitorSP;
 
 class KUndo2Command;
 typedef QSharedPointer<KUndo2Command> KUndo2CommandSP;
-
-typedef QList<KisNodeSP> KisNodeList;
-typedef QSharedPointer<KisNodeList> KisNodeListSP;
 
 typedef QList<KisPaintDeviceSP> KisPaintDeviceList;
 

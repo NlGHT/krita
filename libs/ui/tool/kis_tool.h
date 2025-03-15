@@ -210,6 +210,7 @@ protected:
 
     QPointF convertToPixelCoordAndAlignOnWidget(const QPointF& pt);
 
+    QPointF convertToPixelCoordAndSnap(const KisNodeList nodeList, KoPointerEvent *e, const QPointF &offset = QPointF(), bool useModifiers = true);
     QPointF convertToPixelCoordAndSnap(KoPointerEvent *e, const QPointF &offset = QPointF(), bool useModifiers = true);
     QPointF convertToPixelCoordAndSnap(const QPointF& pt, const QPointF &offset = QPointF());
 
