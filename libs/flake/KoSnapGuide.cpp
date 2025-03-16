@@ -49,7 +49,7 @@ public:
     int snapDistance;
     QList<KoPathPoint*> ignoredPoints;
     QList<KoShape*> ignoredShapes;
-    KisNodeList *currentlyProcessingNodes;
+    KisNodeListSP currentlyProcessingNodes = nullptr;
 };
 
 KoSnapGuide::KoSnapGuide(KoCanvasBase *canvas)
@@ -285,11 +285,15 @@ KoCanvasBase *KoSnapGuide::canvas() const
     return d->canvas;
 }
 
-void KoSnapGuide::setCurrentlyProcessingNodes(KisNodeList *currentlyProcessingNodes) {
+void KoSnapGuide::setCurrentlyProcessingNodes(KisNodeListSP currentlyProcessingNodes) {
     d->currentlyProcessingNodes = currentlyProcessingNodes;
 }
 
-KisNodeList *KoSnapGuide::currentlyProcessingNodes() const
+void KoSnapGuide::clearCurrentlyProcessingNodes() {
+    d->currentlyProcessingNodes = nullptr;
+}
+
+KisNodeListSP KoSnapGuide::currentlyProcessingNodes() const
 {
     return d->currentlyProcessingNodes;
 }
@@ -320,6 +324,7 @@ void KoSnapGuide::reset()
     d->additionalEditedShape = 0;
     d->ignoredPoints.clear();
     d->ignoredShapes.clear();
+    d->currentlyProcessingNodes.clear();
     // remove all custom strategies
     int strategyCount = d->strategies.count();
     for (int i = strategyCount-1; i >= 0; --i) {

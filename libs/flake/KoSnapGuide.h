@@ -128,8 +128,9 @@ public:
     KoCanvasBase *canvas() const;
 
     /// returns the nodes the snap guide is working on
-    KisNodeList *currentlyProcessingNodes() const;
-    void setCurrentlyProcessingNodes(KisNodeList *currentlyProcessingNodes);
+    KisNodeListSP currentlyProcessingNodes() const;
+    void setCurrentlyProcessingNodes(KisNodeListSP currentlyProcessingNodes);
+    void clearCurrentlyProcessingNodes();
 
     /// Sets a list of path points to ignore
     void setIgnoredPathPoints(const QList<KoPathPoint*> &ignoredPoints);

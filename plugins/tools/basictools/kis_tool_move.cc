@@ -18,8 +18,10 @@
 #include "kis_canvas2.h"
 #include "kis_image.h"
 
+#include "kis_shared_ptr.h"
 #include "kis_tool_utils.h"
 #include "kis_paint_layer.h"
+#include "libs/k_types.h"
 #include "strokes/move_stroke_strategy.h"
 #include "kis_tool_movetooloptionswidget.h"
 #include "strokes/move_selection_stroke_strategy.h"
@@ -37,6 +39,7 @@
 #include <boost/operators.hpp>
 #include "KisMoveBoundsCalculationJob.h"
 #include <KisOptimizedBrushOutline.h>
+#include <qglobal.h>
 #include <qobject.h>
 
 
@@ -76,6 +79,8 @@ KisToolMove::KisToolMove(KoCanvasBase *canvas)
     m_showCoordinatesAction->setChecked(m_optionsWidget->showCoordinates());
 
     m_optionsWidget->slotSetTranslate(m_handlesRect.topLeft() + currentOffset());
+    
+    currentlyProcessingNodes = KisNodeListSP(&m_currentlyProcessingNodes);
 
     connect(this, SIGNAL(moveInNewPosition(QPoint)), m_optionsWidget, SLOT(slotSetTranslate(QPoint)), Qt::UniqueConnection);
 }
@@ -252,6 +257,9 @@ bool KisToolMove::startStrokeImpl(MoveToolMode mode, const QPoint *pos)
     m_handlesRect = QRect();
     m_strokeId = image->startStroke(strategy);
     m_currentlyProcessingNodes = nodes;
+    KoSnapGuide *snapGuide = canvas()->snapGuide();
+    snapGuide->setCurrentlyProcessingNodes(currentlyProcessingNodes);
+    qWarning() << "Made SP";
     m_currentlyUsingSelection = isMoveSelection;
     m_currentMode = mode;
     m_accumulatedOffset = QPoint();
@@ -300,6 +308,7 @@ void KisToolMove::notifyGuiAfterMove(bool showFloatingMessage)
 
 bool KisToolMove::tryEndPreviousStroke(const KisNodeList &nodes)
 {
+    qWarning() << "Try end previous stroke called";
     if (!m_strokeId) return false;
 
     bool strokeEnded = false;
@@ -546,8 +555,6 @@ void KisToolMove::startAction(KoPointerEvent *event, MoveToolMode mode)
 {
     QPoint pos = convertToPixelCoordAndSnap(event).toPoint();
     qWarning() << "Print start action" << event->x();
-    KoSnapGuide *snapGuide = canvas()->snapGuide();
-    snapGuide->setCurrentlyProcessingNodes(&m_currentlyProcessingNodes);
     m_dragStart = pos;
     m_dragPos = pos;
 
@@ -623,6 +630,7 @@ void KisToolMove::drag(const QPoint& newPos)
 
 void KisToolMove::endStroke()
 {
+    qWarning() << "End stroke called";
     if (!m_strokeId) return;
 
     if (m_asyncUpdateHelper.isActive()) {
@@ -633,7 +641,7 @@ void KisToolMove::endStroke()
     image->endStroke(m_strokeId);
     m_strokeId.clear();
     m_changesTracker.reset();
-    m_currentlyProcessingNodes.clear();
+    cleanCurrentlyProcessingNodes();
     m_currentlyUsingSelection = false;
     m_currentMode = MoveSelectedLayer;
     m_accumulatedOffset = QPoint();
@@ -705,12 +713,26 @@ void KisToolMove::cancelStroke()
     image->cancelStroke(m_strokeId);
     m_strokeId.clear();
     m_changesTracker.reset();
-    m_currentlyProcessingNodes.clear();
+    cleanCurrentlyProcessingNodes();
     m_currentlyUsingSelection = false;
     m_currentMode = MoveSelectedLayer;
     m_accumulatedOffset = QPoint();
     notifyGuiAfterMove();
     qobject_cast<KisCanvas2*>(canvas())->updateCanvas();
+}
+
+void KisToolMove::cleanCurrentlyProcessingNodes()
+{
+    qWarning() << "Clean called";
+    qWarning() << "Before snapguide access";
+    KoSnapGuide *snapGuide = canvas()->snapGuide();
+    qWarning() << "Before snapguide clear";
+    snapGuide->clearCurrentlyProcessingNodes();
+    // qWarning() << "Before currently processing pointer nullptr";
+    // currentlyProcessingNodes = nullptr;
+    qWarning() << "Before currently processing.clear()";
+    m_currentlyProcessingNodes.clear();
+    qWarning() << "Cleaned currently nodes";
 }
 
 QWidget* KisToolMove::createOptionWidget()

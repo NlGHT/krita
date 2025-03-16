@@ -24,6 +24,7 @@
 #include "KisAsynchronousStrokeUpdateHelper.h"
 
 #include "kis_canvas2.h"
+#include "libs/k_types.h"
 
 
 class KoCanvasBase;
@@ -121,6 +122,7 @@ Q_SIGNALS:
 private:
     void drag(const QPoint& newPos);
     void cancelStroke();
+    void cleanCurrentlyProcessingNodes();
     QPoint applyModifiers(Qt::KeyboardModifiers modifiers, QPoint pos);
 
     bool startStrokeImpl(MoveToolMode mode, const QPoint *pos);
@@ -144,6 +146,10 @@ private Q_SLOTS:
     void slotMoveDiscreteUpMore();
     void slotMoveDiscreteDownMore();
 
+public:
+    KisNodeList m_currentlyProcessingNodes;
+    KisNodeListSP currentlyProcessingNodes = nullptr;
+
 private:
 
     MoveToolOptionsWidget* m_optionsWidget {0};
@@ -152,7 +158,7 @@ private:
 
     KisStrokeId m_strokeId;
 
-    KisNodeList m_currentlyProcessingNodes;
+    
     bool m_currentlyUsingSelection {false};
     MoveToolMode m_currentMode {MoveSelectedLayer};
 

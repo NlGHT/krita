@@ -44,7 +44,7 @@ public:
     KoCanvasBase *canvas();
 
     /// returns list of nodes selected
-    KisNodeList *currentlyProcessingNodes();
+    KisNodeListSP currentlyProcessingNodes();
 
 private:
     KoSnapGuide *m_snapGuide;
